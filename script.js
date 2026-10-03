@@ -9,6 +9,7 @@ const board = document.getElementById('board');
 const scoreEl = document.getElementById('score');
 const messageEl = document.getElementById('message');
 const restartBtn = document.getElementById('restartBtn');
+const directionButtons = document.querySelectorAll('.direction-button');
 
 let snake = [];
 let direction = { x: 1, y: 0 };
@@ -18,6 +19,16 @@ let score = 0;
 let intervalId = null;
 let gameOver = false;
 let isRunning = false;
+let swipeStart = null;
+
+const directions = {
+  up: { x: 0, y: -1 },
+  down: { x: 0, y: 1 },
+  left: { x: -1, y: 0 },
+  right: { x: 1, y: 0 },
+};
+
+const initialMessage = 'Use arrow keys, WASD, swipe, or the directional buttons to move.';
 
 function createBoard() {
   board.innerHTML = '';
@@ -128,7 +139,7 @@ function resetGame() {
   isRunning = false;
   randomApplePosition();
   render();
-  setMessage('Use arrow keys or WASD to move.');
+  setMessage(initialMessage);
 }
 
 function handleDirectionChange(newDirection) {
@@ -178,6 +189,43 @@ document.addEventListener('keydown', (event) => {
 });
 
 restartBtn.addEventListener('click', resetGame);
+
+directionButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    handleDirectionChange(directions[button.dataset.direction]);
+  });
+});
+
+board.addEventListener('pointerdown', (event) => {
+  if (event.isPrimary) {
+    swipeStart = { x: event.clientX, y: event.clientY };
+    board.setPointerCapture(event.pointerId);
+  }
+});
+
+board.addEventListener('pointerup', (event) => {
+  if (!swipeStart || !event.isPrimary) {
+    return;
+  }
+
+  const deltaX = event.clientX - swipeStart.x;
+  const deltaY = event.clientY - swipeStart.y;
+  swipeStart = null;
+
+  if (Math.max(Math.abs(deltaX), Math.abs(deltaY)) < 24) {
+    return;
+  }
+
+  if (Math.abs(deltaX) > Math.abs(deltaY)) {
+    handleDirectionChange(deltaX > 0 ? directions.right : directions.left);
+  } else {
+    handleDirectionChange(deltaY > 0 ? directions.down : directions.up);
+  }
+});
+
+board.addEventListener('pointercancel', () => {
+  swipeStart = null;
+});
 
 createBoard();
 resetGame();
