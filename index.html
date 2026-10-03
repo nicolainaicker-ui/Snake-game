@@ -16,7 +16,13 @@
       </div>
 
       <div id="board" class="board" aria-label="Snake game board"></div>
-      <p id="message">Use arrow keys or WASD to move.</p>
+      <div class="touch-controls" role="group" aria-label="Directional controls">
+        <button class="direction-button direction-up" type="button" data-direction="up" aria-label="Move up">↑</button>
+        <button class="direction-button direction-left" type="button" data-direction="left" aria-label="Move left">←</button>
+        <button class="direction-button direction-down" type="button" data-direction="down" aria-label="Move down">↓</button>
+        <button class="direction-button direction-right" type="button" data-direction="right" aria-label="Move right">→</button>
+      </div>
+      <p id="message">Use arrow keys, WASD, swipe, or the directional buttons to move.</p>
     </main>
 
     <script src="script.js"></script>
